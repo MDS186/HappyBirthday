@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, Алёна!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Special Elite', 'Inter', sans-serif;
+      background: #f2ebe5;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bg {
+      position: fixed;
+      inset: 0;
+      background: #f2ebe5;
+      z-index: 0;
+    }
+    .bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(210, 180, 160, 0.2), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(190, 160, 140, 0.15), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(220, 200, 180, 0.1), transparent 60%);
+      pointer-events: none;
+    }
+    .bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(180, 160, 140, 0.05) 4px, rgba(180, 160, 140, 0.05) 6px);
+      pointer-events: none;
+    }
+    .hand-drawn {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.1;
+      background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(100,70,50,0.1) 20px, rgba(100,70,50,0.1) 21px),
+        repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(100,70,50,0.1) 20px, rgba(100,70,50,0.1) 21px);
+    }
+    .sparkles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(200, 170, 130, 0.3);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(200, 170, 130, 0.1);
+      animation: floatSparkle linear infinite;
+    }
+    @keyframes floatSparkle {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+    .scene {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1000px;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+    }
+    .cake-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 10px 30px rgba(120, 80, 60, 0.15));
+    }
+    .cake-container.hidden {
+      opacity: 0;
+      transform: scale(0.5) translateY(50px) rotateX(15deg);
+      pointer-events: none;
+    }
+    .candle-wrapper {
+      margin-bottom: -6px;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(-140px) scale(0.7);
+      transition: opacity 0.8s ease, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .candle-wrapper.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .candle-wrapper:hover {
+      transform: scale(1.04);
+    }
+    .candle-wrapper.blown {
+      pointer-events: none;
+    }
+    .candle-wrapper.blown .flame {
+      opacity: 0;
+      transform: translateX(-50%) scale(0) rotate(0deg);
+      filter: blur(8px);
+      box-shadow: none;
+    }
+    .candle-wrapper.blown .smoke {
+      display: block;
+    }
+    .candle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .candle-stick {
+      width: 14px;
+      height: 56px;
+      background: #f5e8dc;
+      border-radius: 3px 3px 2px 2px;
+      border: 1px solid #dcc8b8;
+      box-shadow: inset -2px -2px 6px rgba(0,0,0,0.05), 0 6px 16px rgba(120, 80, 60, 0.15);
+      position: relative;
+    }
+    .candle-stick::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 3px;
+      width: 2px;
+      height: 12px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      filter: blur(1px);
+    }
+    .wick {
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 8px;
+      background: #5a4a3a;
+      border-radius: 1px;
+    }
+    .flame {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 28px;
+      background: radial-gradient(circle at 30% 30%, #fff9d0, #f5c27b 55%, #d48c4a 85%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      box-shadow: 0 0 40px rgba(245, 194, 123, 0.3), 0 0 80px rgba(245, 194, 123, 0.1);
+      animation: flicker 0.6s infinite alternate ease-in-out;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1) rotate(-3deg); opacity: 0.9; }
+      100% { transform: translateX(-50%) scale(1.1) rotate(3deg); opacity: 1; }
+    }
+    .smoke {
+      display: none;
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, rgba(200,200,200,0.2) 20%, transparent 70%);
+      border-radius: 50%;
+      animation: smokeRise 1.8s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes smokeRise {
+      0% { opacity: 0.6; transform: translateX(-50%) scale(0.2) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) scale(4) translateY(-120px); }
+    }
+    .layers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 240px;
+      margin-top: -2px;
+    }
+    .layer {
+      width: 100%;
+      height: 30px;
+      border-radius: 14px 14px 6px 6px;
+      margin-bottom: -3px;
+      border: 1px solid rgba(180, 140, 120, 0.25);
+      box-shadow: 0 2px 12px rgba(120, 80, 60, 0.08), inset 0 2px 4px rgba(255,255,255,0.2);
+      transform: translateY(80px) scale(0.85);
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .layer.show {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .layer:nth-child(1) {
+      height: 36px;
+      border-radius: 24px 24px 10px 10px;
+      background: #f0d4c8;
+      background-image: repeating-linear-gradient(45deg, #f0d4c8 0px, #f0d4c8 8px, #e8c8b8 8px, #e8c8b8 16px);
+      border-color: #dbb8a8;
+      box-shadow: 0 6px 20px rgba(120, 80, 60, 0.12), inset 0 2px 6px rgba(255,255,255,0.3);
+    }
+    .layer:nth-child(2) {
+      background: #e8c8b8;
+      background-image: repeating-linear-gradient(45deg, #e8c8b8 0px, #e8c8b8 10px, #e0bca8 10px, #e0bca8 20px);
+      border-color: #d0ac98;
+    }
+    .layer:nth-child(3) {
+      background: #e0bca8;
+      background-image: repeating-linear-gradient(45deg, #e0bca8 0px, #e0bca8 12px, #d8b098 12px, #d8b098 24px);
+      border-color: #c8a088;
+    }
+    .layer:nth-child(4) {
+      height: 32px;
+      border-radius: 8px 8px 24px 24px;
+      background: #d8b098;
+      background-image: repeating-linear-gradient(45deg, #d8b098 0px, #d8b098 14px, #d0a488 14px, #d0a488 28px);
+      border-color: #c09480;
+      box-shadow: 0 6px 24px rgba(120, 80, 60, 0.12);
+    }
+    .layer:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 15%;
+      width: 70%;
+      height: 6px;
+      background: rgba(255, 240, 235, 0.5);
+      border-radius: 4px;
+      filter: blur(1px);
+    }
+    .deco {
+      display: flex;
+      gap: 16px;
+      margin-top: -6px;
+      margin-bottom: 6px;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
+    }
+    .deco.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .deco-dot {
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle at 30% 30%, #fce8e0, #f0d0c0);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      border: 1px solid #e8c0b0;
+      box-shadow: 0 2px 8px rgba(180, 120, 100, 0.15), inset 0 -2px 4px rgba(0,0,0,0.03);
+      position: relative;
+    }
+    .deco-dot::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 4px;
+      height: 4px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 50%;
+    }
+    .hint {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.9rem;
+      color: #b09888;
+      background: rgba(240, 230, 220, 0.7);
+      padding: 6px 24px;
+      border-radius: 60px;
+      margin-top: 16px;
+      opacity: 0;
+      transition: opacity 0.8s ease 0.5s;
+      border: 1px dashed rgba(180, 150, 130, 0.3);
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      box-shadow: 0 2px 12px rgba(120, 80, 60, 0.05);
+    }
+    .hint.show {
+      opacity: 1;
+    }
+    .gifts-container {
+      display: none;
+      gap: 60px;
+      justify-content: center;
+      align-items: flex-end;
+      margin-top: 20px;
+      perspective: 1000px;
+    }
+    .gifts-container.show {
+      display: flex;
+      animation: giftAppear 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes giftAppear {
+      0% { opacity: 0; transform: translateY(50px) scale(0.8) rotateX(-10deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
+    }
+    .gift {
+      width: 170px;
+      height: 200px;
+      background: #f5e8dc;
+      border-radius: 14px 14px 8px 8px;
+      box-shadow: 0 20px 40px rgba(120, 80, 60, 0.15), 0 0 0 1px rgba(180, 150, 130, 0.2) inset;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s;
+      transform: rotateX(2deg) rotateY(-4deg);
+      transform-style: preserve-3d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+    .gift:hover {
+      transform: rotateX(0deg) rotateY(-2deg) translateY(-16px) scale(1.03);
+      box-shadow: 0 30px 60px rgba(120, 80, 60, 0.2), 0 0 0 2px rgba(180, 150, 130, 0.3) inset;
+    }
+    .gift.disabled {
+      cursor: default;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .gift.disabled:hover {
+      transform: rotateX(2deg) rotateY(-4deg) translateY(0) scale(1);
+      box-shadow: 0 20px 40px rgba(120, 80, 60, 0.15), 0 0 0 1px rgba(180, 150, 130, 0.2) inset;
+    }
+    .gift .ribbon-h {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: rgba(180, 140, 120, 0.3);
+      transform: translateY(-50%);
+      z-index: 2;
+      border-radius: 2px;
+      box-shadow: 0 2px 8px rgba(120, 80, 60, 0.05);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid rgba(120, 80, 60, 0.1);
+    }
+    .gift .ribbon-v {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 20px;
+      height: 100%;
+      background: rgba(180, 140, 120, 0.3);
+      transform: translateX(-50%);
+      z-index: 2;
+      border-radius: 2px;
+      box-shadow: 0 2px 8px rgba(120, 80, 60, 0.05);
+      border-left: 1px solid rgba(255,255,255,0.2);
+      border-right: 1px solid rgba(120, 80, 60, 0.1);
+    }
+    .gift .bow {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      width: 50px;
+      height: 38px;
+      filter: drop-shadow(0 4px 12px rgba(120, 80, 60, 0.1));
+      transition: transform 0.3s;
+    }
+    .gift:hover .bow {
+      transform: translateX(-50%) scale(1.1) rotate(-4deg);
+    }
+    .bow::before,
+    .bow::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 26px;
+      background: rgba(180, 140, 120, 0.3);
+      border-radius: 50% 50% 0 50%;
+      box-shadow: 0 2px 8px rgba(120, 80, 60, 0.05);
+      top: 0;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      border-left: 1px solid rgba(255,255,255,0.2);
+    }
+    .bow::before {
+      left: 0;
+      transform: rotate(-20deg);
+    }
+    .bow::after {
+      right: 0;
+      transform: rotate(20deg) scaleX(-1);
+    }
+    .bow .center {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle, #d4b8a8, #b89888);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(120, 80, 60, 0.1);
+      z-index: 4;
+    }
+    .bow .tail-left,
+    .bow .tail-right {
+      position: absolute;
+      bottom: -6px;
+      width: 14px;
+      height: 18px;
+      background: rgba(180, 140, 120, 0.2);
+      border-radius: 0 0 4px 4px;
+      transform: rotate(15deg);
+      border-bottom: 1px solid rgba(120, 80, 60, 0.1);
+    }
+    .bow .tail-left {
+      left: 2px;
+      transform: rotate(25deg);
+    }
+    .bow .tail-right {
+      right: 2px;
+      transform: rotate(-25deg);
+    }
+    .gift:nth-child(1) { background: #f5e8dc; }
+    .gift:nth-child(2) { background: #ece0d4; }
+    .gift:nth-child(3) { background: #e8d8cc; }
+    .gift::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      width: 25%;
+      height: 12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.25), transparent);
+      border-radius: 50%;
+      filter: blur(3px);
+      z-index: 1;
+    }
+    .gift .label {
+      position: absolute;
+      bottom: 18px;
+      background: rgba(255, 240, 230, 0.5);
+      padding: 4px 18px;
+      border-radius: 40px;
+      color: #7a5a4a;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      z-index: 4;
+      border: 1px solid rgba(180, 150, 130, 0.2);
+      font-family: 'Special Elite', cursive;
+    }
+    .letter-container {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.7) rotate(-4deg);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 20px 40px rgba(120, 80, 60, 0.15));
+      perspective: 800px;
+    }
+    .letter-container.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1) rotate(0deg);
+      pointer-events: auto;
+    }
+    .envelope {
+      width: 380px;
+      max-width: 88vw;
+      background: #fcf6f0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px #e8d8cc inset, 0 20px 50px rgba(120, 80, 60, 0.15);
+      position: relative;
+      padding: 22px 24px 18px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      transform-style: preserve-3d;
+      overflow: visible;
+    }
+    .envelope:hover {
+      transform: rotateY(3deg) rotateX(2deg);
+    }
+    .envelope .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 56%;
+      background: #fcf6f0;
+      clip-path: polygon(0 0, 50% 65%, 100% 0);
+      border-bottom: 2px solid #e8d8cc;
+      transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: top center;
+      z-index: 2;
+      border-radius: 12px 12px 0 0;
+      backface-visibility: hidden;
+    }
+    .envelope.open .flap {
+      transform: rotateX(-180deg);
+    }
+    .envelope .seal {
+      position: absolute;
+      top: 22%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle at 40% 30%, #d4a090, #b88878);
+      border-radius: 50%;
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(120, 80, 60, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #f5e0d0;
+      font-family: 'Great Vibes', cursive;
+      border: 2px solid #c89888;
+      transition: opacity 0.5s ease 0.2s;
+    }
+    .envelope.open .seal {
+      opacity: 0;
+    }
+    .envelope .seal::after {
+      content: '♥';
+      font-size: 20px;
+      color: #f5e0d0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .envelope .letter-content {
+      position: relative;
+      z-index: 1;
+      transform: translateY(0);
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
+                  opacity 0.6s ease 0.4s;
+      opacity: 0;
+      padding-top: 44%;
+      text-align: center;
+      color: #5a3a3a;
+    }
+    .envelope.open .letter-content {
+      transform: translateY(-16px);
+      opacity: 1;
+    }
+
+    /* Каллиграфический шрифт для всего письма */
+    .envelope .letter-content h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.6rem;
+      color: #b88878;
+      font-weight: 400;
+      text-shadow: 0 2px 12px rgba(180, 120, 100, 0.08);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    .envelope .letter-content h1 .name {
+      display: block;
+      font-size: 3.2rem;
+      color: #b88878;
+      margin-top: -2px;
+    }
+    .envelope .letter-content p {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: #4a3a3a;
+      background: rgba(245, 240, 235, 0.2);
+      padding: 12px 16px;
+      border-radius: 20px;
+      margin: 8px 0 10px;
+      border: 1px solid rgba(200, 180, 170, 0.1);
+      text-align: left;
+      font-weight: 400;
+    }
+    .envelope .letter-content .heart {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2rem;
+      color: #b88878;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+    .letter-container::after {
+      content: '';
+      position: absolute;
+      bottom: -24px;
+      left: 15%;
+      width: 70%;
+      height: 30px;
+      background: radial-gradient(ellipse, rgba(120, 80, 60, 0.15), transparent 70%);
+      border-radius: 50%;
+      filter: blur(16px);
+      z-index: -1;
+    }
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 30;
+    }
+    @media (max-width: 700px) {
+      .gifts-container { gap: 20px; flex-wrap: wrap; }
+      .gift { width: 120px; height: 150px; }
+      .gift .ribbon-h { height: 16px; }
+      .gift .ribbon-v { width: 16px; }
+      .gift .bow { width: 40px; height: 32px; }
+      .bow::before, .bow::after { width: 18px; height: 22px; }
+      .envelope { padding: 16px; }
+      .envelope .letter-content h1 { font-size: 2.2rem; }
+      .envelope .letter-content h1 .name { font-size: 2.6rem; }
+      .envelope .letter-content p { font-size: 1rem; }
+      .envelope .seal { width: 36px; height: 36px; }
+      .layers { width: 180px; }
+      .layer { height: 24px; }
+      .layer:nth-child(1) { height: 28px; }
+      .layer:nth-child(4) { height: 26px; }
+      .candle-stick { height: 44px; width: 12px; }
+      .flame { width: 14px; height: 20px; top: -20px; }
+      .letter-container { bottom: 40px; }
+    }
+    @media (max-width: 420px) {
+      .gift { width: 90px; height: 120px; }
+      .gift .ribbon-h { height: 12px; }
+      .gift .ribbon-v { width: 12px; }
+      .gift .bow { width: 30px; height: 26px; }
+      .bow::before, .bow::after { width: 14px; height: 18px; }
+      .envelope .letter-content h1 { font-size: 1.8rem; }
+      .envelope .letter-content h1 .name { font-size: 2.2rem; }
+      .envelope .letter-content p { font-size: 0.9rem; }
+      .layers { width: 150px; }
+      .layer { height: 20px; }
+      .layer:nth-child(1) { height: 24px; }
+      .layer:nth-child(4) { height: 22px; }
+      .candle-stick { height: 36px; width: 10px; }
+      .flame { width: 12px; height: 16px; top: -16px; }
+      .envelope { padding: 12px; }
+      .envelope .seal { width: 30px; height: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="hand-drawn"></div>
+  <div class="sparkles" id="sparkles"></div>
+  <canvas id="confetti-canvas"></canvas>
+  <div class="scene">
+    <div class="cake-container" id="cakeContainer">
+      <div class="candle-wrapper" id="candleWrapper">
+        <div class="candle">
+          <div class="candle-stick">
+            <div class="wick"></div>
+            <div class="flame"></div>
+            <div class="smoke"></div>
+          </div>
+        </div>
+      </div>
+      <div class="layers" id="layers">
+        <div class="layer" id="layer1"></div>
+        <div class="layer" id="layer2"></div>
+        <div class="layer" id="layer3"></div>
+        <div class="layer" id="layer4"></div>
+      </div>
+      <div class="deco" id="deco">
+        <span class="deco-dot"></span>
+        <span class="deco-dot"></span>
+        <span class="deco-dot"></span>
+        <span class="deco-dot"></span>
+        <span class="deco-dot"></span>
+      </div>
+      <div class="hint" id="hint">нажми на свечу</div>
+    </div>
+    <div class="gifts-container" id="giftsContainer">
+      <div class="gift" data-index="0">
+        <div class="ribbon-h"></div>
+        <div class="ribbon-v"></div>
+        <div class="bow"><div class="center"></div><div class="tail-left"></div><div class="tail-right"></div></div>
+        <span class="label">♥ Подарок</span>
+      </div>
+      <div class="gift" data-index="1">
+        <div class="ribbon-h"></div>
+        <div class="ribbon-v"></div>
+        <div class="bow"><div class="center"></div><div class="tail-left"></div><div class="tail-right"></div></div>
+        <span class="label">♥ Подарок</span>
+      </div>
+      <div class="gift" data-index="2">
+        <div class="ribbon-h"></div>
+        <div class="ribbon-v"></div>
+        <div class="bow"><div class="center"></div><div class="tail-left"></div><div class="tail-right"></div></div>
+        <span class="label">♥ Подарок</span>
+      </div>
+    </div>
+  </div>
+  <div class="letter-container" id="letterContainer">
+    <div class="envelope" id="envelope">
+      <div class="flap"></div>
+      <div class="seal"></div>
+      <div class="letter-content">
+        <h1>
+          С днём рождения,
+          <span class="name">Алёна!</span>
+        </h1>
+        <p>
+          я редко пишу такие письма, но с тобой хочется иначе.<br><br>
+          я желаю тебе лёгкости, тёплых людей рядом и чтобы ты чувствовала себя важной — для самой себя в первую очередь. не бойся пробовать, даже когда страшно — у тебя всё получится.<br><br>
+          и ещё: ты — тот человек, рядом с которым всё становится чуть теплее. даже на расстоянии.
+        </p>
+        <div class="heart">❤️</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const sparkles = document.getElementById('sparkles');
+    for (let i = 0; i < 25; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      const size = 2 + Math.random() * 3;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.animationDuration = (18 + Math.random() * 25) + 's';
+      s.style.animationDelay = (Math.random() * 25) + 's';
+      s.style.background = `rgba(200, 170, 140, ${0.15 + Math.random() * 0.15})`;
+      sparkles.appendChild(s);
+    }
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    const colors = ['#e8d8cc', '#f0e0d4', '#dcc8b8', '#f5e8dc', '#e0d0c0', '#d8c8b8', '#c8b8a8'];
+    let confetti = [];
+    let confettiEnabled = true;
+    class ConfettiPiece {
+      constructor() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H - H;
+        this.w = 4 + Math.random() * 5;
+        this.h = 2 + Math.random() * 3;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.rotation = Math.random() * 6.28;
+        this.speedY = 1 + Math.random() * 2.5;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.rotSpeed = (Math.random() - 0.5) * 0.04;
+        this.opacity = 0.3 + Math.random() * 0.4;
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.08;
+        this.rotation += this.rotSpeed;
+        if (this.y > H + 40) {
+          this.y = -40;
+          this.x = Math.random() * W;
+          this.speedY = 1 + Math.random() * 2.5;
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+        ctx.restore();
+      }
+    }
+    function launchConfetti(count = 50) {
+      if (!confettiEnabled) return;
+      const maxPieces = 120;
+      const current = confetti.length;
+      const toAdd = Math.min(count, maxPieces - current);
+      for (let i = 0; i < toAdd; i++) {
+        confetti.push(new ConfettiPiece());
+      }
+      if (confetti.length > maxPieces) confetti.splice(maxPieces);
+    }
+    function animateConfetti() {
+      ctx.clearRect(0, 0, W, H);
+      for (let p of confetti) {
+        p.update();
+        p.draw();
+      }
+      if (confetti.length > 120) confetti.splice(120);
+      requestAnimationFrame(animateConfetti);
+    }
+    animateConfetti();
+    const layers = [
+      document.getElementById('layer1'),
+      document.getElementById('layer2'),
+      document.getElementById('layer3'),
+      document.getElementById('layer4')
+    ];
+    const deco = document.getElementById('deco');
+    const hint = document.getElementById('hint');
+    const candleWrapper = document.getElementById('candleWrapper');
+    const cakeContainer = document.getElementById('cakeContainer');
+    const giftsContainer = document.getElementById('giftsContainer');
+    const letterContainer = document.getElementById('letterContainer');
+    const envelope = document.getElementById('envelope');
+    const showOrder = [3, 2, 1, 0];
+    let step = 0;
+    let isBlown = false;
+    let giftsShown = false;
+    let giftChosen = false;
+    function showNextLayer() {
+      if (step < showOrder.length) {
+        const idx = showOrder[step];
+        layers[idx].classList.add('show');
+        step++;
+        if (step === 3) {
+          setTimeout(() => {
+            candleWrapper.classList.add('show');
+            launchConfetti(15);
+          }, 400);
+        }
+        setTimeout(showNextLayer, 450);
+      } else {
+        deco.classList.add('show');
+        if (!candleWrapper.classList.contains('show')) {
+          candleWrapper.classList.add('show');
+        }
+        setTimeout(() => hint.classList.add('show'), 600);
+      }
+    }
+    window.addEventListener('load', () => {
+      setTimeout(showNextLayer, 500);
+      setTimeout(() => launchConfetti(15), 900);
+    });
+    candleWrapper.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (step < showOrder.length) return;
+      if (isBlown) return;
+      if (giftsShown) return;
+      this.classList.add('blown');
+      isBlown = true;
+      hint.classList.remove('show');
+      launchConfetti(100);
+      setTimeout(() => {
+        cakeContainer.classList.add('hidden');
+        giftsContainer.classList.add('show');
+        giftsShown = true;
+        launchConfetti(30);
+      }, 1400);
+    });
+    const giftElements = document.querySelectorAll('.gift');
+    giftElements.forEach(gift => {
+      gift.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (giftChosen || !giftsShown) return;
+        this.style.transform = 'rotateX(0deg) rotateY(-2deg) scale(0.93)';
+        setTimeout(() => { this.style.transform = ''; }, 200);
+        giftElements.forEach(g => g.classList.add('disabled'));
+        giftChosen = true;
+        setTimeout(() => {
+          letterContainer.classList.add('show');
+          setTimeout(() => {
+            envelope.classList.add('open');
+            launchConfetti(40);
+          }, 600);
+        }, 400);
+      });
+    });
+    letterContainer.addEventListener('click', function(e) {
+      if (e.target === this) {
+        letterContainer.classList.remove('show');
+        envelope.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
