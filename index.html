@@ -578,7 +578,6 @@
       opacity: 1;
     }
 
-    /* Каллиграфический шрифт для всего письма */
     .envelope .letter-content h1 {
       font-family: 'Great Vibes', cursive;
       font-size: 2.6rem;
@@ -743,6 +742,7 @@
     </div>
   </div>
   <script>
+    // ===== 1. Искры =====
     const sparkles = document.getElementById('sparkles');
     for (let i = 0; i < 25; i++) {
       const s = document.createElement('div');
@@ -756,6 +756,8 @@
       s.style.background = `rgba(200, 170, 140, ${0.15 + Math.random() * 0.15})`;
       sparkles.appendChild(s);
     }
+
+    // ===== 2. Конфетти (светлые тона) =====
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
     let W, H;
@@ -765,9 +767,11 @@
     }
     resize();
     window.addEventListener('resize', resize);
+
     const colors = ['#e8d8cc', '#f0e0d4', '#dcc8b8', '#f5e8dc', '#e0d0c0', '#d8c8b8', '#c8b8a8'];
     let confetti = [];
     let confettiEnabled = true;
+
     class ConfettiPiece {
       constructor() {
         this.x = Math.random() * W;
@@ -801,6 +805,7 @@
         ctx.restore();
       }
     }
+
     function launchConfetti(count = 50) {
       if (!confettiEnabled) return;
       const maxPieces = 120;
@@ -811,6 +816,7 @@
       }
       if (confetti.length > maxPieces) confetti.splice(maxPieces);
     }
+
     function animateConfetti() {
       ctx.clearRect(0, 0, W, H);
       for (let p of confetti) {
@@ -821,6 +827,8 @@
       requestAnimationFrame(animateConfetti);
     }
     animateConfetti();
+
+    // ===== 3. Сборка торта =====
     const layers = [
       document.getElementById('layer1'),
       document.getElementById('layer2'),
@@ -834,11 +842,13 @@
     const giftsContainer = document.getElementById('giftsContainer');
     const letterContainer = document.getElementById('letterContainer');
     const envelope = document.getElementById('envelope');
+
     const showOrder = [3, 2, 1, 0];
     let step = 0;
     let isBlown = false;
     let giftsShown = false;
     let giftChosen = false;
+
     function showNextLayer() {
       if (step < showOrder.length) {
         const idx = showOrder[step];
@@ -859,19 +869,25 @@
         setTimeout(() => hint.classList.add('show'), 600);
       }
     }
+
     window.addEventListener('load', () => {
       setTimeout(showNextLayer, 500);
       setTimeout(() => launchConfetti(15), 900);
     });
+
+    // ===== 4. Задувание =====
     candleWrapper.addEventListener('click', function(e) {
       e.stopPropagation();
       if (step < showOrder.length) return;
       if (isBlown) return;
       if (giftsShown) return;
+
       this.classList.add('blown');
       isBlown = true;
       hint.classList.remove('show');
+
       launchConfetti(100);
+
       setTimeout(() => {
         cakeContainer.classList.add('hidden');
         giftsContainer.classList.add('show');
@@ -879,15 +895,20 @@
         launchConfetti(30);
       }, 1400);
     });
+
+    // ===== 5. Выбор подарка =====
     const giftElements = document.querySelectorAll('.gift');
     giftElements.forEach(gift => {
       gift.addEventListener('click', function(e) {
         e.stopPropagation();
         if (giftChosen || !giftsShown) return;
+
         this.style.transform = 'rotateX(0deg) rotateY(-2deg) scale(0.93)';
         setTimeout(() => { this.style.transform = ''; }, 200);
+
         giftElements.forEach(g => g.classList.add('disabled'));
         giftChosen = true;
+
         setTimeout(() => {
           letterContainer.classList.add('show');
           setTimeout(() => {
@@ -897,6 +918,8 @@
         }, 400);
       });
     });
+
+    // ===== 6. Закрытие письма =====
     letterContainer.addEventListener('click', function(e) {
       if (e.target === this) {
         letterContainer.classList.remove('show');
